@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FOOTPRINTS | Magnet Quest</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{color-scheme:dark}body{font-family:system-ui,Arial;background:radial-gradient(ellipse at 20% 0%,#193c65,#081327 65%);color:#eef7ff;min-height:100vh}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}.glass{background:#142b48dd;border:1px solid #446586;border-radius:22px;box-shadow:0 14px 35px #0004}.btn{border-radius:14px;padding:12px 19px;background:linear-gradient(110deg,#10c6b1,#1687d7);font-weight:800;color:white}.btn2{background:#254869;border:1px solid #51789a;border-radius:13px;padding:10px 16px}.tile{background:#1c3c5e;border:1px solid #4c7193;border-radius:18px;padding:18px;text-align:left;transition:.2s}.tile:hover{transform:translateY(-3px);border-color:#5debd8}.active{outline:3px solid #ffd568}.hidden{display:none!important}.spark{color:#ffda76}.modal{position:fixed;inset:0;background:#020a18d9;z-index:30;display:grid;place-items:center;padding:20px}.modalbox{max-width:670px;width:100%;max-height:90vh;overflow:auto}.paper{color:#563e22;background:linear-gradient(145deg,#fff6d8,#e8d0a0);border:12px double #a57b38;padding:35px;text-align:center}@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}@keyframes glimmer{0%,100%{filter:drop-shadow(0 0 3px #38f3d2)}50%{filter:drop-shadow(0 0 16px #38f3d2)}}@keyframes popin{from{transform:scale(.86);opacity:0}to{transform:scale(1);opacity:1}}.science-graphic{width:100%;height:245px;background:radial-gradient(ellipse at center,#244b73,#081b34);border:1px solid #487ba2;border-radius:20px;margin:18px 0;overflow:hidden;animation:popin .45s ease}.science-graphic svg{width:100%;height:100%}.quiz-art{animation:floaty 4s ease-in-out infinite}.quiz-spark{animation:glimmer 2s ease-in-out infinite}.concept-card,.glossary-card{position:relative;overflow:hidden;min-height:145px;background:linear-gradient(145deg,#214e78,#112b4d);box-shadow:inset 0 1px #9cdbff35,0 10px 24px #0003}.concept-card:before,.glossary-card:before{content:"";position:absolute;width:160px;height:160px;border-radius:50%;right:-75px;top:-80px;background:radial-gradient(circle,#4bf5dc45,transparent 70%);animation:floaty 4s ease-in-out infinite}.concept-card:hover,.glossary-card:hover{box-shadow:0 0 0 2px #54e9d2,0 15px 40px #0007}.modalbox{max-width:810px}.modalbox canvas{box-shadow:inset 0 0 60px #3cd5ed22,0 10px 35px #0006}.answer{display:block;width:100%;text-align:left;margin:9px 0}.answer.correct{background:#137b5a}.answer.wrong{background:#963e57}input[type=range]{accent-color:#25ddc3;width:100%}canvas{width:100%;height:330px;border-radius:18px;background:#071629;touch-action:none}@media print{body *{visibility:hidden!important}#certificate,#certificate *{visibility:visible!important}#certificate{position:absolute;left:0;top:0;width:100%;min-height:95vh}.no-print{display:none!important}@page{size:landscape;margin:10mm}}
+</style></head><body><div class="max-w-6xl mx-auto px-4 pb-16">
+<header class="flex flex-wrap items-center justify-between gap-3 py-5"><button onclick="home()" class="font-black text-xl tracking-wide">🧲 FOOTPRINTS <span class="text-teal-300">MAGNET QUEST</span></button><div class="flex items-center gap-3 flex-wrap"><span class="glass px-3 py-2">🍬 <b id="candies">0</b></span><span class="glass px-3 py-2" id="lives">❤️❤️❤️❤️❤️</span><button class="btn2" onclick="shop()">🛍️ Rewards Shop</button><button class="btn2" onclick="avatarPicker()" id="avatar">🧑‍🚀</button></div></header>
+<main id="main"></main></div><div id="overlay" class="modal hidden"><div class="glass modalbox p-6" id="modalContent"></div></div>
+<script>
+const UNITS=[
+{title:"Magnet Powers & Poles",pages:"Lesson 1 • Pages F34–F39",emoji:"🧲",brief:"Mission One! Discover how magnets push, pull, attract, and repel. Find out why every magnet has a north and south pole.",terms:[["Pole","One of two places on a magnet where its force is strongest."],["Attract","To pull an object closer."],["Repel","To push another magnet away."],["North Pole","The end of a magnet labeled N."],["South Pole","The end of a magnet labeled S."]],concepts:[["Push and Pull","Magnets exert forces without touching. A pull brings things closer; a push moves them apart."],["Two Poles","Every magnet has a north pole and a south pole."],["Opposites Attract","North and south poles attract each other."],["Matching Poles Repel","North with north or south with south pushes apart."]],questions:[["What happens when a north pole faces a south pole?",["They attract","They disappear","They melt"],0,"Unlike poles attract each other.","Opposite Poles"],["What happens when two north poles face each other?",["They stick together","They repel","Nothing can happen"],1,"Like poles repel.","Like Poles"],["Where is a bar magnet's force strongest?",["In the middle","At its poles","Only above it"],1,"Magnetic force is strongest near the poles.","Magnetic Poles"],["What does 'repel' mean?",["Push away","Pull closer","Turn into metal"],0,"Repel means push away.","Repulsion"],["How many poles does a magnet have?",["One","Three","Two"],2,"A magnet has two poles: north and south.","Two Poles"]]},
+{title:"Magnetic or Nonmagnetic?",pages:"Lesson 2 • Pages F40–F45",emoji:"🔎",brief:"Mission Two! Become a material detective. Test everyday objects and discover which ones a magnet attracts.",terms:[["Magnetic","Able to be attracted by a magnet."],["Nonmagnetic","Not attracted by a magnet."],["Iron","A metal that magnets attract."],["Classify","To sort objects into groups by shared properties."],["Electromagnet","A magnet created using electric current."]],concepts:[["Magnetic Materials","Iron and many types of steel are attracted to magnets."],["Nonmagnetic Materials","Wood, paper, plastic, and glass are not attracted to ordinary magnets."],["Magnet Helpers","Magnets are used in fridge doors, electric motors, and lifting equipment."],["Sorting Objects","Scientists classify objects based on observed properties."]],questions:[["Which object will a magnet usually attract?",["Iron paper clip","Wooden pencil","Plastic spoon"],0,"Iron paper clips are magnetic.","Magnetic Materials"],["Which material is nonmagnetic?",["Iron","Wood","Steel paper clip"],1,"Wood is not attracted to ordinary magnets.","Nonmagnetic Materials"],["What does classify mean?",["Paint objects","Sort objects into groups","Break objects"],1,"Classifying means sorting by shared properties.","Classify"],["Which device uses magnets?",["Refrigerator door","Paper napkin","Wooden ruler"],0,"Refrigerator doors often use magnetic strips.","Everyday Magnets"],["What is iron?",["A magnetic metal","A type of paper","A kind of plastic"],0,"Iron is attracted to magnets.","Iron"]]},
+{title:"Invisible Magnetic Fields",pages:"Lesson 3 • Pages F48–F52",emoji:"✨",brief:"Mission Three! Reveal the invisible field around a magnet and investigate how distance changes its pull.",terms:[["Magnetic Field","The region around a magnet where magnetic forces act."],["Force","A push or a pull."],["Distance","How far apart two things are."],["Predict","Use what you know to say what may happen."],["Field Lines","Lines that help us visualize the direction of a magnetic field."]],concepts:[["Invisible Field","A magnetic field surrounds every magnet, even when we cannot see it."],["Stronger at Poles","The field is strongest near the ends of a bar magnet."],["Distance Matters","The magnetic effect usually weakens as objects move farther away."],["Through Materials","Magnetic fields can act through paper, plastic, glass, water, and air."]],questions:[["What is a magnetic field?",["A painted line","The region where magnetic force acts","A type of wood"],1,"A magnetic field is the region where magnetic forces act.","Magnetic Field"],["Where is the field strongest?",["Near the poles","Far away","Only inside paper"],0,"The field is strongest near the poles.","Field Strength"],["What happens when distance increases?",["Pull usually gets weaker","The magnet becomes hotter","The field disappears instantly"],0,"Magnetic effects generally weaken with distance.","Distance"],["Can a magnet attract a paper clip through paper?",["Yes, if close enough","Never","Only if the paper is wet"],0,"A magnetic field can act through paper.","Through Materials"],["What does predict mean?",["Guess using evidence","Close your eyes","Draw without looking"],0,"Scientists use knowledge and observations to predict.","Prediction"]]}];
+const KEY="footprints_magnet_quest_v1";let s;try{s=JSON.parse(localStorage.getItem(KEY))||{}}catch{s={}};s={name:"",candies:0,lives:5,passed:[false,false,false],scores:[0,0,0],owned:["🧑‍🚀"],avatar:"🧑‍🚀",...s};let magnetSim=null;let glossaryFrame=0,glossaryState=null;let unit=0,checked=new Set(),qIndex=0,correct=0,wrong=[],answered=false,mode="attract",distance=95,fieldOn=true,particles=[],anim=0,briefAnim=0;
+const $=id=>document.getElementById(id),save=()=>{localStorage.setItem(KEY,JSON.stringify(s));stats()},safe=t=>String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function stats(){if($("candies"))$("candies").textContent=s.candies;if($("lives"))$("lives").textContent="❤️".repeat(s.lives)+"🖤".repeat(5-s.lives);if($("avatar"))$("avatar").textContent=s.avatar}
+let quizSpeechToken=0,quizAdvanceTimer=null;
+function speak(t,onFinished){
+  if(!('speechSynthesis' in window)){if(onFinished)onFinished();return}
+  speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.88;u.pitch=1.07;
+  let v=speechSynthesis.getVoices().find(v=>v.lang==='en-US');if(v)u.voice=v;
+  let completed=false;const finish=()=>{if(completed)return;completed=true;if(onFinished)onFinished()};
+  u.onend=finish;u.onerror=finish;speechSynthesis.speak(u);
+  return u;
+}
+function showModal(html){$("modalContent").innerHTML=html;$("overlay").classList.remove("hidden")}function closeModal(){$("overlay").classList.add("hidden");cancelAnimationFrame(briefAnim);cancelAnimationFrame(glossaryFrame);glossaryState=null;cancelAnimationFrame(conceptFrame);conceptState=null}
+function home(){magnetSim=null;cancelAnimationFrame(anim);cancelAnimationFrame(briefAnim);$("main").innerHTML=`<section class="glass p-7 md:p-10 mb-7"><div class="text-6xl mb-3">🧲⚡🌟</div><p class="text-teal-300 font-bold">CHAPTER 13 • GRADE 2 SCIENCE</p><h1 class="text-4xl md:text-6xl font-black my-3">The Amazing World of Magnets</h1><p class="text-slate-300 text-lg">Explore forces, materials, and invisible magnetic fields in three exciting missions!</p><div class="flex gap-3 flex-wrap items-center mt-6"><input aria-label="Explorer name" id="student" maxlength="55" placeholder="Your explorer name" value="${safe(s.name)}" class="p-3 rounded-xl bg-slate-900 border border-slate-500 text-white"><button class="btn" onclick="setName()">Save Explorer Name</button><button class="btn2" onclick="speak('Welcome to Magnet Quest! Discover the amazing world of magnets!')">🔊 Hear Welcome</button></div></section><h2 class="text-2xl font-black mb-4">🗺️ Your Learning Path</h2><div class="grid md:grid-cols-3 gap-5">${UNITS.map((u,i)=>`<article class="glass p-6"><div class="text-5xl">${u.emoji}</div><p class="text-teal-300 font-bold mt-4">UNIT ${i+1}</p><h3 class="text-2xl font-black my-2">${u.title}</h3><p class="text-slate-300 mb-4">${u.pages}</p><p class="mb-4">${s.passed[i]?`🏆 Passed • ${s.scores[i]}%`:i&&!s.passed[i-1]?"🔒 Locked":"🌟 Ready to explore"}</p><button class="btn w-full" ${i&&!s.passed[i-1]?"disabled":""} onclick="startUnit(${i})">${s.passed[i]?"Play Again":i&&!s.passed[i-1]?"Complete Previous Unit":"Start Mission →"}</button></article>`).join("")}</div>${s.passed.every(Boolean)?`<div class="glass p-6 mt-6 text-center"><h2 class="text-3xl font-black">🏆 All Missions Completed!</h2><button class="btn mt-4" onclick="certificate()">View Certificate</button></div>`:""}</section>`;stats()}
+function setName(){s.name=$("student").value.trim().slice(0,55);save();speak(s.name?`Welcome, ${s.name}!`:"Please enter your name.");home()}
+function startUnit(i){if(i&&!s.passed[i-1])return;unit=i;checked=new Set();const u=UNITS[i];showModal(`<div class="flex justify-between items-center"><b class="text-teal-300">MISSION BRIEFING ${i+1}/3</b><button onclick="closeModal()" class="btn2">✕</button></div><h2 class="text-3xl font-black mt-4">${u.emoji} ${u.title}</h2><canvas id="briefCanvas" style="height:220px;margin:20px 0"></canvas><p class="text-lg">${u.brief}</p><div class="flex flex-wrap gap-3 mt-5"><button class="btn2" onclick="speak(${JSON.stringify(u.brief).replace(/"/g,"&quot;")})">🔊 Hear Mission</button><button class="btn" onclick="closeModal();lab()">Enter Science Lab →</button></div>`);briefing()}
+function briefing(){let c=$("briefCanvas");if(!c)return;let x=c.getContext("2d");c.width=640;c.height=220;let t=0;function frame(){if(!$("briefCanvas"))return;x.clearRect(0,0,640,220);x.fillStyle="#071629";x.fillRect(0,0,640,220);for(let i=0;i<55;i++){let a=i*2.399+t*.007,r=35+(i%13)*10;x.fillStyle=`hsla(${165+i*3},90%,70%,.7)`;x.beginPath();x.arc(320+Math.cos(a)*r,110+Math.sin(a)*r*.65,2.2,0,7);x.fill()}drawMag(x,260,88,120,44,"N","S");t++;briefAnim=requestAnimationFrame(frame)}frame()}
+function lab(){magnetSim=null;cancelAnimationFrame(anim);const u=UNITS[unit];$("main").innerHTML=`<button class="btn2 mb-5" onclick="home()">← Learning Path</button><div class="glass p-6"><p class="text-teal-300 font-bold">UNIT ${unit+1} • ${u.pages}</p><h1 class="text-3xl font-black mt-2">${u.emoji} ${u.title}</h1><p class="mt-2">${u.brief}</p><button class="btn2 mt-3" onclick="speak(UNITS[unit].brief)">🔊 Listen to Lesson</button></div><section class="grid lg:grid-cols-3 gap-5 mt-5"><div class="glass p-5 lg:col-span-2"><h2 class="text-2xl font-black mb-3">🔬 Interactive Science Lab</h2><canvas id="labCanvas" aria-label="Interactive magnetic force simulation"></canvas><p id="labInfo" class="text-teal-200 mt-3 font-bold"></p></div><div class="glass p-5"><h3 class="text-xl font-black mb-4">🎛️ Experiment Controls</h3><div id="controls"></div><button class="btn2 w-full mt-4" onclick="speak($('labInfo').textContent)">🔊 Explain Experiment</button></div></section><h2 class="text-2xl font-black mt-8 mb-3">💡 Core Concepts & Insights</h2><div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">${u.concepts.map((c,i)=>`<button class="tile concept-card" onclick="concept(${i})"><span class="text-3xl">${["💡","🧲","⚡","🌟"][i]}</span><h3 class="font-black text-lg mt-3">${c[0]}</h3><p class="text-sm text-slate-300 mt-2">Tap to discover →</p></button>`).join("")}</div><div class="glass p-6 mt-8"><h2 class="text-2xl font-black">📖 Interactive Science Glossary</h2><p class="text-slate-300 mt-1">Tap a science word, explore its animated experiment, and complete a hands-on challenge.</p><p class="font-bold spark my-4" id="termCount">Terms Checked: 0/5</p><div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">${u.terms.map((t,i)=>`<button id="term${i}" class="tile glossary-card" onclick="term(${i})"><span class="text-2xl">🔊</span><h3 class="font-black mt-2">${t[0]}</h3><p class="text-xs text-slate-300 mt-2">Explore experiment →</p></button>`).join("")}</div><button id="quizBtn" disabled class="btn mt-6 w-full" onclick="startQuiz()">🔒 Check All 5 Terms to Unlock Quiz</button></div>`;controls();drawLab()}
+function controls(){let html=unit===0?`<p class="mb-2">Choose facing poles:</p><div class="grid grid-cols-2 gap-2">${["attract","repel"].map(m=>`<button class="btn2 ${mode===m?"active":""}" onclick="mode='${m}';controls()">${m==="attract"?"S ↔ N":"N ↔ N"}</button>`).join("")}</div><p class="text-sm text-slate-300 mt-4">Drag the right magnet with your mouse or finger. Watch the force respond!</p><button class="btn2 w-full mt-3" onclick="if(magnetSim)magnetSim.reset()">↺ Reset Magnets</button>`:unit===1?`<p class="mb-2">Choose a test object:</p><div class="grid grid-cols-2 gap-2">${["📎 Paper clip","🪵 Wood","🥄 Steel spoon","🧴 Plastic"].map((m,i)=>`<button class="btn2" onclick="mode='${i}';controls()">${m}</button>`).join("")}</div>`:`<p class="mb-2">Magnet-to-clip distance: <b id="distLabel">${distance}</b> px</p><input aria-label="Magnet distance" type="range" min="40" max="220" value="${distance}" oninput="distance=+this.value;$('distLabel').textContent=distance"><label class="flex gap-2 mt-4"><input type="checkbox" ${fieldOn?"checked":""} onchange="fieldOn=this.checked"> Show magnetic field lines</label>`;$("controls").innerHTML=html}
+function drawMag(ctx,x,y,w,h,left="N",right="S"){ctx.save();ctx.shadowColor="#3dfce2";ctx.shadowBlur=13;ctx.fillStyle="#ef536b";ctx.fillRect(x,y,w/2,h);ctx.fillStyle="#358be6";ctx.fillRect(x+w/2,y,w/2,h);ctx.fillStyle="#ffffff44";ctx.fillRect(x+5,y+5,w-10,Math.max(3,h*.12));ctx.strokeStyle="#d8f8ff";ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);ctx.shadowBlur=0;ctx.fillStyle="white";ctx.font=`bold ${Math.max(17,h*.52)}px Arial`;ctx.textAlign="center";ctx.fillText(left,x+w/4,y+h*.69);ctx.fillText(right,x+w*.75,y+h*.69);ctx.restore()}
+function fieldLines(ctx,cx,cy,r,alpha=1){ctx.save();ctx.strokeStyle=`rgba(79,224,218,${alpha*.5})`;ctx.lineWidth=1.6;for(let k=0;k<11;k++){let spread=(k-5)*18;ctx.beginPath();ctx.moveTo(cx-65,cy);ctx.bezierCurveTo(cx-155,cy+spread*2,cx+155,cy+spread*2,cx+65,cy);ctx.stroke()}ctx.restore()}
+function drawLab(){const c=$("labCanvas");if(!c)return;const ctx=c.getContext("2d");c.width=850;c.height=420;let tick=0;function frame(){if(!$("labCanvas"))return;ctx.clearRect(0,0,850,420);let g=ctx.createLinearGradient(0,0,850,420);g.addColorStop(0,"#102f4e");g.addColorStop(1,"#071425");ctx.fillStyle=g;ctx.fillRect(0,0,850,420);let orb=ctx.createRadialGradient(420,200,15,420,200,390);orb.addColorStop(0,"#174b6b55");orb.addColorStop(1,"#00000000");ctx.fillStyle=orb;ctx.fillRect(0,0,850,420);for(let k=0;k<36;k++){let xx=(k*173+tick*(k%3+1)*.19)%850,yy=(k*83+Math.sin(tick*.014+k)*17)%420;ctx.fillStyle=`rgba(102,241,226,${.1+(k%5)*.065})`;ctx.beginPath();ctx.arc(xx,yy,1.2+(k%3)*.5,0,Math.PI*2);ctx.fill()}ctx.strokeStyle="#183855";for(let i=0;i<850;i+=42){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,420);ctx.stroke()}for(let i=0;i<420;i+=42){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(850,i);ctx.stroke()}ctx.font="bold 20px Arial";ctx.fillStyle="#ccefff";ctx.textAlign="center";let info="";
+if(unit===0){if(!magnetSim||magnetSim.canvas!==c)magnetSim=createMagnetPhysics(c,()=>mode==="repel"?"NN":"SN",true);magnetSim.paint(ctx,tick);info=magnetSim.message()}
+
+if(unit===1){let obj=Number(mode)||0,yes=obj===0||obj===2;drawMag(ctx,170,167,230,77);ctx.font="95px Arial";ctx.fillText(["📎","🪵","🥄","🧴"][obj],620+Math.sin(tick*.035)*(yes?15:0),250);ctx.font="bold 26px Arial";ctx.fillStyle=yes?"#68f6c5":"#ffb67b";ctx.fillText(yes?"ATTRACTED!":"NOT ATTRACTED",520,110);info=yes?"This object contains magnetic metal. The magnet attracts it.":"This object is nonmagnetic. The magnet does not attract it."}
+if(unit===2){if(fieldOn)fieldLines(ctx,380,207,160,.9);drawMag(ctx,270,175,220,70);let px=490+distance;ctx.font="65px Arial";ctx.fillText("📎",Math.min(800,px),235);let strength=Math.max(0,Math.round(100*Math.pow(40/distance,1.7)));ctx.fillStyle="#39d7be";ctx.fillRect(260,340,strength*3,18);ctx.strokeStyle="#fff";ctx.strokeRect(260,340,300,18);ctx.font="bold 18px Arial";ctx.fillStyle="#fff";ctx.fillText("Relative pull indicator",410,390);info=distance<90?"The clip is close to the magnet. The magnetic effect is stronger.":"The clip is farther away. The magnetic effect is weaker."}
+$("labInfo").textContent=info;tick++;anim=requestAnimationFrame(frame)}frame()}
+
+let conceptFrame=0,conceptState=null;
+function concept(i){
+cancelAnimationFrame(glossaryFrame);cancelAnimationFrame(conceptFrame);
+const [title,desc]=UNITS[unit].concepts[i];
+conceptState={unit,index:i,drag:false,x:465,phase:0,playing:true,showLines:true,material:0,force:0,experiment:false};
+let scenes=[
+["PUSH OR PULL?","THE TWO POLES","OPPOSITE POLES ATTRACT","MATCHING POLES REPEL"],
+["TEST THE MATERIAL","WOOD, PLASTIC & GLASS","MAGNETS IN REAL LIFE","SORT THE OBJECTS"],
+["AN INVISIBLE FIELD","STRONGER AT THE ENDS","MOVE IT FARTHER AWAY","FORCE THROUGH PAPER"]
+];
+showModal(`<div class="flex items-start justify-between gap-3"><div><p class="font-black text-teal-300 text-sm">CORE CONCEPT ${i+1}/4 • UNIT ${unit+1}</p><h2 class="text-3xl font-black mt-2">${safe(title)}</h2></div><button class="btn2" onclick="closeModal()">✕</button></div>
+<p class="text-lg mt-3">${safe(desc)}</p>
+<div class="mt-4 relative rounded-2xl overflow-hidden border border-cyan-500 shadow-2xl"><canvas id="conceptCanvas" style="height:340px;border-radius:0" aria-label="${safe(scenes[unit][i])} animated interactive demonstration"></canvas><span class="absolute left-3 top-3 bg-slate-950/80 rounded-lg px-3 py-2 text-xs font-bold text-teal-200">✋ DRAG THE GLOWING OBJECT</span></div>
+<div class="mt-3 text-center font-black text-xl text-amber-200" id="conceptSceneTitle">${scenes[unit][i]}</div>
+<p class="mt-2 text-center text-teal-100" id="conceptObservation">Watch the animation, then move the object to experiment.</p>
+<div class="flex flex-wrap gap-3 mt-5"><button class="btn" onclick="conceptToggle()">⏯️ Play / Pause</button><button class="btn2" onclick="conceptReset()">↻ Restart</button><button class="btn2" onclick="speak(UNITS[conceptState.unit].concepts[conceptState.index][0]+'. '+UNITS[conceptState.unit].concepts[conceptState.index][1])">🔊 Explain in English</button><button class="btn2" onclick="closeModal()">Done ✓</button></div>`);
+initConceptCanvas();speak(title+". "+desc);
+}
+function conceptToggle(){if(conceptState)conceptState.playing=!conceptState.playing}
+function conceptReset(){if(conceptState){conceptState.x=620;conceptState.v=0;conceptState.impact=false;conceptState.manual=false;conceptState.phase=0;conceptState.playing=true;conceptState.experiment=false}}
+
+let soundEnabled=true,audioCtx=null;
+function magneticClick(){
+if(!soundEnabled)return;
+try{
+audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();
+if(audioCtx.state==="suspended")audioCtx.resume();
+let now=audioCtx.currentTime;
+for(let k=0;k<3;k++){let o=audioCtx.createOscillator(),gain=audioCtx.createGain(),f=audioCtx.createBiquadFilter();o.type=k===0?"triangle":"sine";o.frequency.setValueAtTime([980,1450,2200][k],now);o.frequency.exponentialRampToValueAtTime([340,600,940][k],now+.10);f.type="lowpass";f.frequency.value=2600;gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.08/(k+1),now+.009);gain.gain.exponentialRampToValueAtTime(.0001,now+.19);o.connect(f);f.connect(gain);gain.connect(audioCtx.destination);o.start(now);o.stop(now+.2)}
+}catch(e){}
+}
+function initConceptCanvas(){
+const c=$("conceptCanvas"),st=conceptState;if(!c||!st)return;
+c.width=900;c.height=450;c.style.touchAction="none";st.x=620;st.v=0;st.impact=false;st.lastImpact=0;st.material=0;st.manual=false;st.objectX=650;
+let controls=document.createElement("div");controls.id="conceptExtraControls";controls.className="flex flex-wrap gap-2 mt-3";
+let materialNames=["Steel paper clip","Wooden block","Steel spoon","Plastic bottle"];
+controls.innerHTML=`<button class="btn2" onclick="conceptToggleSound()" id="soundSwitch">🔊 Sound ON</button><button class="btn2" onclick="conceptReset()">↻ Reset Experiment</button>`+(st.unit===1?`<div class="flex flex-wrap gap-2 w-full">${materialNames.map((m,i)=>`<button class="btn2" id="material${i}" onclick="conceptMaterial(${i})">${["📎","🪵","🥄","🧴"][i]} ${m}</button>`).join("")}</div>`:"")+(st.unit===0&&st.index===0?`<div class="flex flex-wrap gap-2 w-full"><button class="btn2" onclick="conceptMode('attract')">🟢 Opposite poles (attract)</button><button class="btn2" onclick="conceptMode('repel')">🔴 Same poles (repel)</button></div>`:"");
+$("conceptSceneTitle").after(controls);
+st.mode=st.index===3?"repel":"attract";
+function pointer(e){const r=c.getBoundingClientRect();return Math.max(320,Math.min(850,(e.clientX-r.left)*900/r.width))}
+c.onpointerdown=e=>{st.drag=true;st.manual=true;st.playing=true;st.x=pointer(e);st.v=0;c.setPointerCapture(e.pointerId)};
+c.onpointermove=e=>{if(st.drag){st.x=pointer(e);st.v=0}};
+c.onpointerup=()=>{st.drag=false};
+c.onpointercancel=()=>{st.drag=false};
+const ctx=c.getContext("2d");
+function label(text,x,y,size=23,color="#e5faff"){ctx.font=`bold ${size}px Arial`;ctx.fillStyle=color;ctx.textAlign="center";ctx.fillText(text,x,y)}
+function magnet(x,y,reverse=false,w=195){let h=80;ctx.save();ctx.shadowColor="#33e9ef";ctx.shadowBlur=20;ctx.fillStyle=reverse?"#277bd8":"#ec4d64";ctx.fillRect(x,y,w/2,h);ctx.fillStyle=reverse?"#ec4d64":"#277bd8";ctx.fillRect(x+w/2,y,w/2,h);ctx.shadowBlur=0;ctx.fillStyle="#ffffff44";ctx.fillRect(x+5,y+5,w-10,11);ctx.strokeStyle="#f1fcff";ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);label(reverse?"S":"N",x+w/4,y+51,34);label(reverse?"N":"S",x+w*.75,y+51,34);ctx.restore()}
+function arrow(x1,y1,x2,y2,col){let a=Math.atan2(y2-y1,x2-x1);ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-15*Math.cos(a-.5),y2-15*Math.sin(a-.5));ctx.lineTo(x2-15*Math.cos(a+.5),y2-15*Math.sin(a+.5));ctx.closePath();ctx.fill()}
+function field(cx,cy){ctx.strokeStyle="#56f5d688";ctx.lineWidth=2;for(let j=0;j<9;j++){ctx.beginPath();ctx.ellipse(cx,cy,110+j*21,25+j*13,0,0,Math.PI*2);ctx.stroke()}}
+function frame(){
+if(conceptState!==st||!$("conceptCanvas"))return;
+let dt=1/60;if(st.playing)st.phase+=dt;
+let t=st.phase;ctx.clearRect(0,0,900,450);
+let grad=ctx.createRadialGradient(450,210,30,450,210,620);grad.addColorStop(0,"#1b5275");grad.addColorStop(1,"#051329");ctx.fillStyle=grad;ctx.fillRect(0,0,900,450);
+ctx.strokeStyle="#2e709144";for(let x=0;x<900;x+=45){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,450);ctx.stroke()}for(let y=0;y<450;y+=45){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(900,y);ctx.stroke()}
+for(let i=0;i<32;i++){let x=(i*137+t*(i%4+1)*15)%900,y=(i*83+Math.sin(t+i)*15)%450;ctx.fillStyle=`rgba(100,255,227,${.12+i%5*.08})`;ctx.beginPath();ctx.arc(x,y,1.4,0,7);ctx.fill()}
+let message="",isPoles=st.unit===0,metal=st.material===0||st.material===2;
+if(isPoles){
+let mode=st.index===0?st.mode:st.index===3?"repel":"attract";
+if(st.index===1){magnet(340,165,false,220);field(450,205);label("NORTH POLE",389,125,25,"#ffb4c1");label("SOUTH POLE",510,125,25,"#9dcfff");label("N",395,315,24);label("S",505,315,24);message="A magnet has exactly two poles: North (N) and South (S)."}
+else{
+let limit=320;
+if(!st.drag&&st.playing){
+if(!st.manual){st.x=590+Math.sin(t*.8)*75;st.manual=true}
+let dist=st.x-limit;
+let accel=mode==="attract"?-(.8+Math.max(0,300-dist)*.009):.8+Math.max(0,160-dist)*.018;
+if(mode==="attract"&&st.x>limit){st.v=(st.v+accel)*.98;st.x+=st.v}
+if(mode==="repel"){st.v=(st.v+accel)*.96;st.x=Math.min(850,st.x+st.v)}
+if(mode==="attract"&&st.x<=limit){st.x=limit;st.v=0;if(!st.impact){magneticClick();st.impact=true} }
+if(mode==="repel"&&st.x>limit+55)st.impact=false;
+}
+if(st.drag){st.impact=false}
+magnet(125,177,false,195);magnet(st.x,177,mode==="repel",195);
+let c=(mode==="attract"?"#70ffd0":"#ffab87");
+if(mode==="attract"){arrow(335,217,390,217,c);arrow(st.x-16,217,st.x-63,217,c)}
+else{arrow(365,217,330,217,c);arrow(st.x-15,217,st.x+28,217,c)}
+label(mode==="attract"?"SOUTH (S)  +  NORTH (N)":"SOUTH (S)  +  SOUTH (S)",450,106,26,c);
+label(mode==="attract"?"OPPOSITE POLES ATTRACT":"MATCHING POLES REPEL",450,352,28,c);
+message=mode==="attract"?"The S pole faces the N pole. Opposite poles pull together and stick.":"The S pole faces another S pole. Matching poles push apart. Drag them closer and release.";
+}
+}else if(st.unit===1){
+magnet(115,183,false,190);
+let item=st.materialSelected?st.material:st.index===0?0:st.index===1?1:st.index===2?2:0;
+let metal=item===0||item===2;
+if(!st.drag&&st.playing){
+if(!st.manual)st.x=610+Math.sin(t*.7)*80;
+if(metal&&st.x<550){st.v=(st.v-1.6)*.96;st.x+=st.v;if(st.x<=340){st.x=340;st.v=0;if(!st.impact){magneticClick();st.impact=true}}}
+else st.impact=false;
+}
+ctx.save();ctx.translate(st.x,220);
+if(item===0){ctx.rotate(-.25);ctx.strokeStyle="#e5f4ff";ctx.lineWidth=8;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(-12,30);ctx.lineTo(-12,-22);ctx.bezierCurveTo(-12,-54,38,-54,38,-22);ctx.lineTo(38,26);ctx.bezierCurveTo(38,57,-24,57,-24,23);ctx.lineTo(-24,-12);ctx.stroke()}
+if(item===1){ctx.fillStyle="#b87838";ctx.fillRect(-42,-34,84,68);ctx.strokeStyle="#f0bf7b";ctx.lineWidth=3;ctx.strokeRect(-42,-34,84,68);ctx.strokeStyle="#74421d";for(let j=-20;j<24;j+=17){ctx.beginPath();ctx.moveTo(-36,j);ctx.bezierCurveTo(-5,j+13,10,j-12,35,j);ctx.stroke()}}
+if(item===2){ctx.fillStyle="#c6d8e5";ctx.strokeStyle="#fff";ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(0,-32,28,19,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillRect(-7,-17,14,81);ctx.strokeRect(-7,-17,14,81)}
+if(item===3){ctx.fillStyle="#60c9d7";ctx.beginPath();ctx.roundRect(-28,-38,56,83,12);ctx.fill();ctx.fillStyle="#d5faff";ctx.fillRect(-18,-48,36,12)}
+ctx.restore();
+label(["STEEL PAPER CLIP","WOODEN BLOCK","MAGNETIC STEEL SPOON","PLASTIC BOTTLE"][item],530,105,23);
+if(metal){arrow(st.x-42,222,st.x-95,222,"#6effc9");label("MAGNETIC • ATTRACTED",450,360,26,"#6effc9");message=st.x<=350?"CLINK! The magnetic metal is attached to the magnet.":"Move the metal object close. The magnet pulls it toward itself."}
+else{label("NONMAGNETIC • NO ATTRACTION",450,360,26,"#ffe29d");message="This object is not attracted. Moving it near the magnet does not make it stick."}
+}else{
+magnet(240,178,false,205);
+if(st.index!==3)field(342,218);
+if(st.index===0){label("INVISIBLE MAGNETIC FIELD",450,102,26,"#7effdf");message="The curved lines visualize the field around the magnet."}
+if(st.index===1){for(let x of [240,445])for(let j=0;j<12;j++){let a=j*Math.PI/6+t;ctx.fillStyle="#ffdc79";ctx.beginPath();ctx.arc(x+Math.cos(a)*42,220+Math.sin(a)*56,4,0,7);ctx.fill()}label("STRONGEST AT BOTH POLES",450,345,25);message="The magnetic field is strongest near the north and south ends."}
+if(st.index===2){label("📎",st.x,247,66);let strength=Math.round(Math.min(100,100*Math.pow(70/Math.max(70,st.x-445),1.1)));ctx.fillStyle="#55eecb";ctx.fillRect(300,330,strength*3,15);ctx.strokeStyle="#fff";ctx.strokeRect(300,330,300,15);label("RELATIVE PULL: "+strength+"%",450,392,20);message="Drag the paper clip closer to see a stronger magnetic pull."}
+if(st.index===3){ctx.fillStyle="#d3f2ff66";ctx.fillRect(480,125,26,190);label("PAPER",493,108,18);label("📎",st.x,253,66);message="A magnet can attract a steel paper clip through thin paper."}
+}
+let out=$("conceptObservation");if(out)out.textContent=message;
+conceptFrame=requestAnimationFrame(frame)
+}frame()
+}
+function conceptMaterial(i){if(!conceptState)return;conceptState.material=i;conceptState.materialSelected=true;conceptState.x=650;conceptState.v=0;conceptState.impact=false;conceptState.manual=false;conceptState.phase=0;for(let j=0;j<4;j++){let b=$("material"+j);if(b)b.classList.toggle("active",i===j)}}
+function conceptMode(m){if(!conceptState)return;conceptState.mode=m;conceptState.x=620;conceptState.v=0;conceptState.impact=false;conceptState.manual=false;conceptState.phase=0}
+function conceptToggleSound(){soundEnabled=!soundEnabled;let b=$("soundSwitch");if(b)b.textContent=soundEnabled?"🔊 Sound ON":"🔇 Sound OFF"}
+
+const glossaryTasks=[
+[
+["Move the magnet near the metal clip. Watch the poles glow.","Slide the magnet","POLES: A magnet has two poles, N and S. The magnetic force is strongest at its ends."],
+["Drag the magnet toward the paper clip.","Pull the magnet","ATTRACT: The paper clip moves toward the magnet because it contains magnetic metal."],
+["Drag the right magnet toward the left magnet, then release it. Both facing poles are S.","Drag and release","REPEL: Like poles, such as N and N, push away from each other."],
+["Drag the magnet closer to the compass. The needle turns as the magnetic field changes.","Drag the magnet","NORTH POLE: The end marked N is a north pole. Opposite poles attract."],
+["Drag the magnet closer to the compass. The needle turns as the magnetic field changes.","Drag the magnet","SOUTH POLE: The end marked S is a south pole. A magnet always has both poles."]
+],
+[
+["Move the magnet toward the steel paper clip.","Move the magnet","MAGNETIC: Iron and many steel objects respond to magnets."],
+["Move the magnet near the wooden block.","Move the magnet","NONMAGNETIC: Wood does not get pulled toward an ordinary magnet."],
+["Move the magnet near the iron nail.","Move the magnet","IRON: Iron is a metal strongly attracted to magnets."],
+["Choose a material and observe whether it moves.","Choose a material","CLASSIFY: Group objects based on what you observe: magnetic or nonmagnetic."],
+["Switch the electric current on and off.","Switch current","ELECTROMAGNET: Electric current creates a magnetic field in a coil."]
+],
+[
+["Move the paper clip around the magnet to explore the invisible field.","Move the clip","MAGNETIC FIELD: Magnetic forces act in the space around a magnet."],
+["Move the clip closer and farther to see the strength change.","Change distance","FORCE: A force is a push or a pull."],
+["Drag the clip far away, then move it closer.","Change distance","DISTANCE: The magnet's pull generally becomes weaker farther away."],
+["Make a prediction, then test it with the slider.","Predict and test","PREDICT: Scientists use what they know to say what may happen."],
+["Turn the field-line display on and off.","Show or hide lines","FIELD LINES: Lines help us picture the direction and shape of a magnetic field."]
+]];
+function term(i){
+cancelAnimationFrame(glossaryFrame);glossaryState={i,drag:false,x:510,frame:0,changed:false,kind:unit,material:0,current:false,lines:true,prediction:null};
+let t=UNITS[unit].terms[i],task=glossaryTasks[unit][i];
+showModal(`<div class="flex items-start justify-between gap-2"><div><p class="text-teal-300 font-black text-sm">🔬 SCIENCE WORD LAB • ${i+1}/5</p><h2 class="text-3xl font-black mt-2">${safe(t[0])}</h2></div><button class="btn2" onclick="closeModal()">✕</button></div>
+<p class="text-lg mt-3">${safe(t[1])}</p><button class="btn2 mt-3" onclick="speak(UNITS[unit].terms[glossaryState.i][0]+'. '+UNITS[unit].terms[glossaryState.i][1])">🔊 Listen to Word & Meaning</button>
+<div class="mt-4 rounded-2xl overflow-hidden border border-teal-700 relative"><canvas id="glossaryCanvas" style="height:285px;border-radius:0" aria-label="Interactive animated experiment for ${safe(t[0])}"></canvas><div class="absolute top-3 left-3 bg-slate-950/80 rounded-lg px-3 py-1 text-xs font-bold">✋ DRAG THE GLOWING OBJECT</div></div>
+<p class="text-teal-200 mt-3 font-bold" id="glossaryInstruction">${safe(task[0])}</p>
+<div id="glossaryControls" class="mt-4"></div><p id="glossaryResult" aria-live="polite" class="mt-3 text-amber-200 font-bold">Try the experiment to unlock this word.</p>
+<div class="flex flex-wrap gap-3 mt-5"><button id="glossaryDone" class="btn" disabled onclick="completeGlossary()">🔒 Complete the experiment first</button><button class="btn2" onclick="closeModal()">Back to Glossary</button></div>`);
+let control=$("glossaryControls");
+if(unit===1&&i===3)control.innerHTML=`<div class="flex gap-2 flex-wrap">${["📎 Steel","🪵 Wood","🧴 Plastic"].map((m,j)=>`<button class="btn2" onclick="glossaryAction('material',${j})">${m}</button>`).join("")}</div>`;
+else if(unit===1&&i===4)control.innerHTML=`<button class="btn2" onclick="glossaryAction('current')">⚡ Turn Current ON / OFF</button>`;
+else if(unit===2&&i===4)control.innerHTML=`<button class="btn2" onclick="glossaryAction('lines')">✨ Toggle Field Lines</button>`;
+else if(unit===2&&i===3)control.innerHTML=`<div class="flex flex-wrap gap-2"><button class="btn2" onclick="glossaryAction('predict','stronger')">🔮 I predict: Stronger</button><button class="btn2" onclick="glossaryAction('predict','weaker')">🔮 I predict: Weaker</button></div><p class="text-sm text-slate-300 mt-2">Then drag the clip toward or away from the magnet.</p>`;
+else control.innerHTML=`<label class="text-sm text-slate-200">Move the object: <input type="range" min="350" max="740" value="620" oninput="glossaryAction('move',+this.value)" aria-label="Move the object"></label>`;
+initGlossaryCanvas();speak(t[0]+". "+t[1]+". "+task[0]);
+}
+function glossaryAction(action,value){
+let g=glossaryState;if(!g)return;
+if(action==="move")g.x=value;
+if(action==="material")g.material=value;
+if(action==="current")g.current=!g.current;
+if(action==="lines")g.lines=!g.lines;
+if(action==="predict")g.prediction=value;
+if(action==="move"||action==="material"||action==="current"||action==="lines"||(action==="predict"&&g.changed))glossarySuccess();
+}
+function glossarySuccess(){
+let g=glossaryState;if(!g)return;
+if(unit===2&&g.i===3&&!g.prediction)return;
+g.changed=true;$("glossaryDone").disabled=false;$("glossaryDone").textContent="⭐ I Explored It! Mark Word Complete";
+$("glossaryResult").textContent=glossaryTasks[unit][g.i][2];
+}
+function completeGlossary(){
+let g=glossaryState;if(!g||!g.changed)return;
+checked.add(g.i);let index=g.i;closeModal();
+$("term"+index).classList.add("active");$("term"+index).querySelector("p").textContent="✓ Experiment completed";
+$("termCount").textContent=`Terms Checked: ${checked.size}/5`;
+if(checked.size===5){$("quizBtn").disabled=false;$("quizBtn").textContent="🚀 Start the 5-Question Quiz";speak("Fantastic! You explored all five science words. Your quiz is unlocked!")}
+else speak("Great experiment! You completed this science word.");
+}
+
+
+function initGlossaryCanvas(){
+const c=$("glossaryCanvas"),g=glossaryState;if(!c||!g)return;
+c.width=820;c.height=390;c.style.height="330px";c.style.touchAction="none";
+g.x=620;g.v=0;g.drag=false;g.hit=false;g.needle=0;g.lastX=620;g.manual=false;g.material=0;g.frame=0;
+const ctx=c.getContext("2d");
+const point=e=>{let r=c.getBoundingClientRect();return {x:Math.max(250,Math.min(760,(e.clientX-r.left)*820/r.width)),y:(e.clientY-r.top)*390/r.height}};
+const compassMode=unit===0&&(g.i===3||g.i===4);
+c.onpointerdown=e=>{let p=point(e);g.drag=true;g.manual=true;g.x=p.x;g.v=0;c.setPointerCapture(e.pointerId);if(!(unit===2&&g.i===3&&!g.prediction))glossarySuccess()};
+c.onpointermove=e=>{if(g.drag){g.x=point(e).x;g.v=0;if(!(unit===2&&g.i===3&&!g.prediction))glossarySuccess()}};
+c.onpointerup=()=>g.drag=false;c.onpointercancel=()=>g.drag=false;
+const txt=(t,x,y,size=22,color="#effaff")=>{ctx.fillStyle=color;ctx.font=`bold ${size}px Arial`;ctx.textAlign="center";ctx.fillText(t,x,y)};
+const arrow=(x,y,toX,color)=>{let dir=Math.sign(toX-x);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(toX,y);ctx.stroke();ctx.beginPath();ctx.moveTo(toX,y);ctx.lineTo(toX-dir*13,y-9);ctx.lineTo(toX-dir*13,y+9);ctx.fill()};
+function magnet(x,y,reverse=false,w=200){let h=76;ctx.save();ctx.shadowBlur=19;ctx.shadowColor="#3df8e1";ctx.fillStyle=reverse?"#317fdb":"#ec526a";ctx.fillRect(x,y,w/2,h);ctx.fillStyle=reverse?"#ec526a":"#317fdb";ctx.fillRect(x+w/2,y,w/2,h);ctx.shadowBlur=0;ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);ctx.fillStyle="#ffffff45";ctx.fillRect(x+5,y+5,w-10,10);txt(reverse?"S":"N",x+w*.25,y+49,29);txt(reverse?"N":"S",x+w*.75,y+49,29);ctx.restore()}
+function clip(x,y){ctx.save();ctx.translate(x,y);ctx.rotate(-.25);ctx.strokeStyle="#dcefff";ctx.lineWidth=8;ctx.lineCap="round";ctx.shadowColor="#8cccf7";ctx.shadowBlur=12;ctx.beginPath();ctx.moveTo(-10,27);ctx.lineTo(-10,-22);ctx.bezierCurveTo(-10,-52,35,-52,35,-22);ctx.lineTo(35,27);ctx.bezierCurveTo(35,55,-23,55,-23,23);ctx.lineTo(-23,-10);ctx.stroke();ctx.restore()}
+function nail(x,y){ctx.save();ctx.translate(x,y);ctx.rotate(-.35);ctx.fillStyle="#c8d7e2";ctx.strokeStyle="#f7ffff";ctx.lineWidth=2;ctx.fillRect(-8,-42,16,76);ctx.fillRect(-20,-45,40,11);ctx.beginPath();ctx.moveTo(-8,34);ctx.lineTo(0,53);ctx.lineTo(8,34);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore()}
+function wood(x,y){ctx.save();ctx.translate(x,y);ctx.fillStyle="#b87939";ctx.fillRect(-42,-32,84,64);ctx.strokeStyle="#f0bd74";ctx.lineWidth=3;ctx.strokeRect(-42,-32,84,64);ctx.strokeStyle="#74451f";for(let j=-20;j<=20;j+=18){ctx.beginPath();ctx.moveTo(-35,j);ctx.bezierCurveTo(-5,j+12,10,j-12,35,j);ctx.stroke()}ctx.restore()}
+function plastic(x,y){ctx.save();ctx.translate(x,y);ctx.fillStyle="#6ac9d9";ctx.beginPath();ctx.roundRect(-26,-37,52,75,12);ctx.fill();ctx.fillStyle="#e1faff";ctx.fillRect(-17,-45,34,10);ctx.strokeStyle="#d3ffff";ctx.strokeRect(-26,-37,52,75);ctx.restore()}
+function compass(cx,cy){
+ctx.save();ctx.translate(cx,cy);ctx.shadowColor="#55dfea";ctx.shadowBlur=20;ctx.fillStyle="#10334e";ctx.beginPath();ctx.arc(0,0,72,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle="#f3d38a";ctx.lineWidth=7;ctx.stroke();ctx.strokeStyle="#b8d5e4";ctx.lineWidth=1;for(let k=0;k<12;k++){let a=k*Math.PI/6;ctx.beginPath();ctx.moveTo(Math.sin(a)*58,-Math.cos(a)*58);ctx.lineTo(Math.sin(a)*65,-Math.cos(a)*65);ctx.stroke()}
+ctx.rotate(g.needle);ctx.fillStyle="#fb5b72";ctx.beginPath();ctx.moveTo(0,-55);ctx.lineTo(-12,0);ctx.lineTo(12,0);ctx.fill();ctx.fillStyle="#6abaff";ctx.beginPath();ctx.moveTo(0,55);ctx.lineTo(-12,0);ctx.lineTo(12,0);ctx.fill();ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(0,0,5,0,Math.PI*2);ctx.fill();ctx.restore();txt("COMPASS",cx,cy-96,21,"#ffe19a");txt("N",cx,cy-80,17);txt("S",cx,cy+93,17)
+}
+function field(cx,cy){ctx.strokeStyle="#5cf7c588";ctx.lineWidth=2;for(let j=0;j<7;j++){ctx.beginPath();ctx.ellipse(cx,cy,110+j*21,30+j*14,0,0,Math.PI*2);ctx.stroke()}}
+function frame(){
+if(glossaryState!==g||!$("glossaryCanvas"))return;
+g.frame++;ctx.clearRect(0,0,820,390);
+let grad=ctx.createRadialGradient(400,170,10,400,170,550);grad.addColorStop(0,"#1b4c6d");grad.addColorStop(1,"#071429");ctx.fillStyle=grad;ctx.fillRect(0,0,820,390);
+ctx.strokeStyle="#4a769833";for(let x=0;x<820;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,390);ctx.stroke()}for(let y=0;y<390;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(820,y);ctx.stroke()}
+let i=g.i,repel=unit===0&&i===2,attract=unit===0&&i===1||unit===1&&(i===0||i===2||(i===3&&g.material===0))||unit===2&&i!==4;
+if(!g.drag){
+if(repel&&g.x<540){g.v=Math.min(12,(g.v+1.5)*.96);g.x=Math.min(760,g.x+g.v)}
+if(attract&&g.x<550&&g.x>342){g.v=Math.max(-13,(g.v-1.2)*.96);g.x=Math.max(342,g.x+g.v);if(g.x===342&&!g.hit){magneticClick();g.hit=true}}
+if(compassMode){
+// The north-seeking red tip follows the field: away from an approaching N,
+// toward an approaching S.  A close N above the compass makes S point up.
+let strength=Math.max(0,Math.min(1,(760-g.x)/420));
+let target=i===3?Math.PI:0;
+let desired=target*strength;
+let delta=Math.atan2(Math.sin(desired-g.needle),Math.cos(desired-g.needle));
+g.needle+=delta*(g.drag?.16:.075);
+}
+}
+if(g.drag&&compassMode){let strength=Math.max(0,Math.min(1,(760-g.x)/420));let target=(i===3?Math.PI:0)*strength;g.needle+=Math.atan2(Math.sin(target-g.needle),Math.cos(target-g.needle))*.16}
+if(unit===0){
+if(i===0){magnet(305,157);field(405,195);txt("NORTH (N)",355,127,19,"#ffc2ca");txt("SOUTH (S)",455,127,19,"#9fceff");txt("TWO POLES • STRONGEST AT THE ENDS",410,336,21,"#ffe29e")}
+if(i===1){magnet(120,158);clip(g.x,197);if(g.x>345)arrow(g.x-45,198,g.x-100,"#74f9c6");txt("STEEL PAPER CLIP",610,110,22);txt(g.x<=344?"CLINK! THE CLIP STICKS":"DRAG THE CLIP TOWARD THE MAGNET",410,331,22,"#83ffd6")}
+if(i===2){magnet(90,158);magnet(g.x,158,true);arrow(332,195,292,"#ffae9b");arrow(g.x-10,195,g.x+40,"#ffae9b");txt("SOUTH (S)  FACES  SOUTH (S)",410,109,24,"#ffba9c");txt("LIKE POLES REPEL • DRAG AND RELEASE",410,331,22,"#ffba9c")}
+if(compassMode){
+// A vertical bar magnet moves toward the compass from ABOVE.
+// The lower tip is N in the North experiment, S in the South experiment.
+let proximity=Math.max(0,Math.min(1,(760-g.x)/420));
+let mx=410,my=18+proximity*85,mw=78,mh=106;
+ctx.save();ctx.shadowBlur=17;ctx.shadowColor="#48e4ff";
+ctx.fillStyle=i===3?"#317fdb":"#ef526a";ctx.fillRect(mx-mw/2,my,mw,mh/2);
+ctx.fillStyle=i===3?"#ef526a":"#317fdb";ctx.fillRect(mx-mw/2,my+mh/2,mw,mh/2);
+ctx.shadowBlur=0;ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.strokeRect(mx-mw/2,my,mw,mh);
+txt(i===3?"S":"N",mx,my+35,27);txt(i===3?"N":"S",mx,my+88,27);ctx.restore();
+compass(410,284);
+let close=proximity>.7;
+txt(i===3?"N POLE APPROACHES: BLUE S TIP TURNS UP":"S POLE APPROACHES: RED N TIP TURNS UP",410,369,18,"#84ffe1");
+if(close)txt("OPPOSITE POLES FACE EACH OTHER",410,53,16,"#ffe19a");
+}
+}
+if(unit===1){
+magnet(120,158);
+if(i===4){ctx.strokeStyle=g.current?"#67ffd5":"#7389a2";ctx.lineWidth=6;for(let j=0;j<7;j++){ctx.beginPath();ctx.ellipse(470+j*14,195,34,72,0,0,Math.PI*2);ctx.stroke()}nail(600,190);txt(g.current?"CURRENT ON • MAGNETIC FIELD":"CURRENT OFF • NO ELECTROMAGNET",410,333,21,g.current?"#83ffd6":"#ffdb9b")}
+else{
+let mat=i===1?1:i===2?0:i===3?g.material:0;
+if(i===2)nail(g.x,197);else if(mat===0)clip(g.x,197);else if(mat===1)wood(g.x,197);else plastic(g.x,197);
+let yes=i===2||mat===0;
+if(yes&&g.x>345)arrow(g.x-45,198,g.x-100,"#74f9c6");
+txt(i===2?"IRON NAIL":mat===0?"STEEL PAPER CLIP":mat===1?"WOODEN BLOCK":"PLASTIC BOTTLE",610,110,20);
+txt(yes?(g.x<=344?"CLINK! METAL STICKS":"MAGNETIC • ATTRACTED"):"NONMAGNETIC • NO ATTRACTION",410,332,23,yes?"#80ffd2":"#ffe3a2");
+}
+}
+if(unit===2){
+magnet(140,155);if(g.lines)field(240,193);
+if(i!==4){clip(g.x,197);let dist=Math.max(40,g.x-342),power=Math.min(100,Math.round(100*Math.pow(50/dist,.85)));ctx.fillStyle="#5ff7cc";ctx.fillRect(230,303,power*3.5,15);ctx.strokeStyle="#fff";ctx.strokeRect(230,303,350,15);txt("RELATIVE MAGNETIC PULL: "+power+"%",410,355,20)}
+else txt(g.lines?"FIELD LINES VISIBLE":"FIELD LINES HIDDEN",410,333,22)}
+ctx.fillStyle="#061527cc";ctx.fillRect(0,0,820,38);txt("INTERACTIVE SCIENCE LAB • DRAG THE OBJECT",410,27,17,"#a9ffe7");
+glossaryFrame=requestAnimationFrame(frame)
+}frame()
+}
+// Magnetic interaction model: correct facing poles, pointer dragging, spring/damping and field effects.
+function createMagnetPhysics(canvas,configuration,isLab=false){
+const W=850,H=420,magW=206,magH=70,leftX=122,leftY=165;
+let x=520,v=0,drag=false,dragOffset=0,lastPointer=0,lastX=x,burst=0;
+canvas.width=W;canvas.height=H;canvas.style.cursor="grab";
+const cfg=()=>typeof configuration==="function"?configuration():configuration;
+const getPoles=()=>{let m=cfg();return m==="NN"?["S","N","N","S"]:m==="SS"?["N","S","S","N"]:["N","S","N","S"]};
+const point=e=>{let r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}};
+canvas.addEventListener("pointerdown",e=>{let p=point(e);if(p.x>=x-20&&p.x<=x+magW+20&&p.y>=leftY-25&&p.y<=leftY+magH+25){drag=true;dragOffset=p.x-x;lastPointer=performance.now();lastX=x;canvas.setPointerCapture(e.pointerId);canvas.style.cursor="grabbing"}});
+canvas.addEventListener("pointermove",e=>{if(!drag)return;let p=point(e);let nx=Math.max(leftX+magW+6,Math.min(W-magW-20,p.x-dragOffset));let now=performance.now();v=Math.max(-16,Math.min(16,(nx-lastX)*16/Math.max(10,now-lastPointer)));x=nx;lastX=x;lastPointer=now});
+const release=e=>{if(drag){drag=false;canvas.style.cursor="grab";burst=28}};
+canvas.addEventListener("pointerup",release);canvas.addEventListener("pointercancel",release);
+function reset(){x=520;v=0;burst=0}
+function message(){let poles=getPoles(),same=poles[1]===poles[2];return same?`Like poles (${poles[1]} and ${poles[2]}) repel: move them close and watch them push apart.`:`Unlike poles (${poles[1]} and ${poles[2]}) attract: move them close and watch them pull together.`}
+function paint(ctx,t){let poles=getPoles(),same=poles[1]===poles[2],gap=x-(leftX+magW),closeness=Math.max(0,1-Math.max(0,gap)/360);
+if(!drag){let force=(same?1:-1)*(0.16+2.6*closeness*closeness);if(!same&&gap<7){x=leftX+magW+6;v=0}else{v=(v+force)*.94;x=Math.max(leftX+magW+6,Math.min(W-magW-20,x+v));if(x===W-magW-20)v=0}}
+ctx.save();ctx.strokeStyle="#3a7b9a";ctx.lineWidth=2;ctx.setLineDash([5,9]);ctx.beginPath();ctx.moveTo(leftX+magW+8,leftY+magH/2);ctx.lineTo(x-8,leftY+magH/2);ctx.stroke();ctx.setLineDash([]);
+for(let k=0;k<12;k++){let a=k*Math.PI/6+t*.002;ctx.strokeStyle=`rgba(${same?'255,151,130':'73,236,207'},${.13+closeness*.5})`;ctx.lineWidth=1.4;ctx.beginPath();let sx=leftX+magW-10,sy=leftY+magH/2;let ex=x+10,ey=sy;let bend=Math.sin(a)*Math.min(155,gap*.5+30);ctx.moveTo(sx,sy);ctx.bezierCurveTo(sx+Math.max(20,gap*.2),sy+bend,ex-Math.max(20,gap*.2),ey+bend,ex,ey);ctx.stroke()}
+drawMag(ctx,leftX,leftY,magW,magH,poles[0],poles[1]);drawMag(ctx,x,leftY,magW,magH,poles[2],poles[3]);
+ctx.textAlign="center";ctx.font="bold 28px system-ui";ctx.fillStyle=same?"#ffae86":"#70ffe1";ctx.fillText(same?"↤  REPEL  ↦":"→  ATTRACT  ←",(leftX+magW+x)/2,leftY-40);
+ctx.font="bold 18px system-ui";ctx.fillStyle="#e2faff";ctx.fillText(`FACING POLES: ${poles[1]}  +  ${poles[2]}`,(leftX+magW+x)/2,leftY+magH+42);
+ctx.font="16px system-ui";ctx.fillStyle="#b6d4e7";ctx.fillText("DRAG ME ↔",x+magW/2,leftY+magH+74);
+if(burst>0){for(let i=0;i<14;i++){let a=i*Math.PI/7,rr=(29-burst)*3;ctx.fillStyle=same?"#ffb087":"#65ffdc";ctx.beginPath();ctx.arc(x+magW/2+Math.cos(a)*rr,leftY+magH/2+Math.sin(a)*rr,2.6,0,7);ctx.fill()}burst--}ctx.restore()}
+return {canvas,paint,reset,message};
+}
+function startQuizMagnet(qi){let c=$("quizMagnetCanvas");if(!c)return;let conf=qi===1?"NN":"SN";if(qi===2){conf="SN"}magnetSim=createMagnetPhysics(c,conf);let ctx=c.getContext("2d"),t=0;function frame(){if(!c.isConnected||magnetSim?.canvas!==c)return;ctx.clearRect(0,0,850,420);let bg=ctx.createLinearGradient(0,0,850,420);bg.addColorStop(0,"#173d5b");bg.addColorStop(1,"#061628");ctx.fillStyle=bg;ctx.fillRect(0,0,850,420);magnetSim.paint(ctx,t++);requestAnimationFrame(frame)}frame()}
+
+function quizGraphic(qi){
+const question=UNITS[unit].questions[qi][0].toLowerCase();
+if(unit===0 && qi<=1)return `<div class="science-graphic" style="height:265px"><canvas id="quizMagnetCanvas" style="height:265px" aria-label="Drag the magnet to investigate magnetic forces"></canvas></div><p class="text-sm text-teal-200">👆 Drag the right magnet. Try moving it toward the other magnet.</p>`;
+const base=(inner)=>`<div class="science-graphic" role="img" aria-label="Science illustration for the question"><svg viewBox="0 0 640 250" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="magred" x1="0" x2="1"><stop stop-color="#ff8295"/><stop offset="1" stop-color="#db375a"/></linearGradient><linearGradient id="magblue" x1="0" x2="1"><stop stop-color="#73baff"/><stop offset="1" stop-color="#2674c7"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="3"/></filter></defs><g opacity=".17" stroke="#9adfff">${Array.from({length:12},(_,i)=>`<path d="M${i*60} 0V250"/>`).join("")}${Array.from({length:5},(_,i)=>`<path d="M0 ${i*60}H640"/>`).join("")}</g>${inner}</svg></div>`;
+const bar=(x,y,n="N",ss="S",w=150)=>`<g class="quiz-art"><rect x="${x}" y="${y}" width="${w}" height="62" rx="10" fill="#071a30" stroke="#9ae8ff" stroke-width="2"/><path d="M${x+8} ${y+5}h${w/2-8}v52h-${w/2-8}z" fill="url(#magred)"/><path d="M${x+w/2} ${y+5}h${w/2-8}v52h-${w/2-8}z" fill="url(#magblue)"/><text x="${x+w/4}" y="${y+42}" text-anchor="middle" fill="white" font-size="30" font-weight="bold">${n}</text><text x="${x+w*3/4}" y="${y+42}" text-anchor="middle" fill="white" font-size="30" font-weight="bold">${ss}</text></g>`;
+const label=(text)=>`<text x="320" y="225" text-anchor="middle" fill="#c9edff" font-size="18" font-weight="bold">${text}</text>`;
+if(unit===0){
+if(question.includes("how many"))return base(bar(244,90)+`<circle cx="282" cy="85" r="43" fill="none" stroke="#ffe084" stroke-dasharray="5 7"/>`+label("Explore the ends of a magnet"));
+if(question.includes("strongest"))return base(bar(245,92)+`<g stroke="#67f6d2" stroke-width="2" fill="none">${Array.from({length:10},(_,i)=>{let a=i*Math.PI/5;return `<path d="M${245+Math.cos(a)*35} ${123+Math.sin(a)*35}q-70 ${Math.sin(a)*90} -95 ${Math.cos(a)*70}"/><path d="M${395+Math.cos(a)*35} ${123+Math.sin(a)*35}q70 ${Math.sin(a)*90} 95 ${Math.cos(a)*70}"/>`}).join("")}</g>`+label("Observe the magnetic field"));
+return base(bar(120,88)+bar(370,88,question.includes("north poles")?"N":"S","N")+`<path d="M286 118h68" stroke="#ffe084" stroke-width="5" stroke-dasharray="8 6"/><path d="M298 110l-14 8 14 8M342 110l14 8-14 8" fill="none" stroke="#ffe084" stroke-width="4"/>`+label("What happens between these magnets?"));
+}
+if(unit===1){
+let wood=question.includes("nonmagnetic")||question.includes("classify");
+let icons=question.includes("device")?["🚪","🧲","⚙️"]:question.includes("iron")?["🔩","📎","🧲"]:["📎","🪵","🥄","🧴"];
+return base(bar(75,95)+icons.map((v,i)=>`<g class="quiz-art"><rect x="${295+i*76}" y="88" width="66" height="70" rx="12" fill="#1d4667" stroke="#64b6df"/><text x="${328+i*76}" y="136" font-size="36" text-anchor="middle">${v}</text></g>`).join("")+label(wood?"Explore different materials":"Which objects react to a magnet?"));
+}
+if(question.includes("predict"))return base(`<text x="320" y="123" font-size="85" text-anchor="middle">🔬❓💡</text>`+label("Observe, think, and predict"));
+if(question.includes("through"))return base(bar(130,90)+`<rect x="335" y="60" width="25" height="128" fill="#e7efff" opacity=".38" stroke="#c6eaff" stroke-width="3"/><text x="345" y="48" fill="#e5f5ff" font-size="16" text-anchor="middle">PAPER</text><text x="475" y="145" font-size="66" text-anchor="middle">📎</text>`+label("A magnetic field can pass through paper"));
+let far=question.includes("distance");
+return base(`<g fill="none" stroke="#50e8d0" opacity=".6">${Array.from({length:9},(_,i)=>`<ellipse cx="320" cy="125" rx="${100+i*21}" ry="${30+i*10}" stroke-dasharray="${i%2?"5 8":"none"}"/>`).join("")}</g>`+bar(245,95)+`<text x="${far?570:500}" y="152" font-size="42">📎</text>`+label(far?"Think about the distance":"Explore the invisible magnetic field"));
+}
+
+function startQuiz(){if(checked.size!==5)return;qIndex=0;correct=0;wrong=[];quiz()}
+function quiz(){quizSpeechToken++;clearTimeout(quizAdvanceTimer);magnetSim=null;cancelAnimationFrame(anim);let q=UNITS[unit].questions[qIndex];answered=false;$("main").innerHTML=`<section class="glass p-6 md:p-10 max-w-3xl mx-auto"><p class="text-teal-300 font-black">UNIT ${unit+1} • SCIENCE CHALLENGE</p><h1 class="text-3xl font-black my-4">🧠 Question ${qIndex+1} of 5</h1><div class="bg-slate-700 h-3 rounded-full overflow-hidden mb-6"><div class="bg-teal-400 h-full" style="width:${qIndex*20}%"></div></div><h2 class="text-2xl font-bold mb-2">${q[0]}</h2>${quizGraphic(qIndex)}<button class="btn2 mb-4" onclick="speak(${JSON.stringify(q[0]).replace(/"/g,"&quot;")})">🔊 Read Question</button><div id="answers">${q[1].map((a,i)=>`<button class="tile answer" id="a${i}" onclick="answer(${i})">${String.fromCharCode(65+i)}. ${a}</button>`).join("")}</div><div id="feedback" class="mt-5"></div></section>`;if(unit===0&&qIndex<=1)startQuizMagnet(qIndex);speak(q[0])}
+function answer(i){if(answered)return;const speechToken=++quizSpeechToken;clearTimeout(quizAdvanceTimer);answered=true;let q=UNITS[unit].questions[qIndex],ok=i===q[2];if(ok)correct++;else{wrong.push({topic:q[4],explanation:q[3]});s.lives=Math.max(0,s.lives-1)}for(let j=0;j<q[1].length;j++){$("a"+j).disabled=true;if(j===q[2])$("a"+j).classList.add("correct");else if(j===i)$("a"+j).classList.add("wrong")}let msg=(ok?"Correct! Great science thinking. ":"Not quite. ")+q[3];$("feedback").innerHTML=`<div class="glass p-5"><p class="text-xl font-bold">${ok?"🌟 Correct!":"💡 Let's Learn!"}</p><p class="mt-2">${q[3]}</p><button class="btn mt-4" onclick="nextQ()">${qIndex===4?"See Results":"Next Question →"}</button></div>`;const goNext=()=>{if(speechToken!==quizSpeechToken||!answered)return;clearTimeout(quizAdvanceTimer);nextQ()};
+  speak(msg,goNext);
+  // Some browser speech engines never fire onend; use a conservative backup timeout.
+  const words=msg.trim().split(/\s+/).length;
+  quizAdvanceTimer=setTimeout(goNext,Math.max(7000,Math.min(22000,words*560+2800)));
+  save()}
+function nextQ(){if(!answered)return;quizSpeechToken++;clearTimeout(quizAdvanceTimer);answered=false;qIndex++;if(qIndex<5)quiz();else results()}
+function results(){magnetSim=null;let pct=correct*20,pass=pct>=80;if(pass){s.passed[unit]=true;s.scores[unit]=Math.max(s.scores[unit],pct);s.candies+=50+(pct===100?25:0);s.lives=Math.min(5,s.lives+1)}else if(s.lives===0)s.lives=5;save();$("main").innerHTML=`<section class="glass max-w-3xl mx-auto p-8 text-center"><div class="text-7xl">${pass?"🏆":"📘"}</div><h1 class="text-4xl font-black mt-4">${pass?"Mission Complete!":"Review Before Retrying"}</h1><p class="text-5xl spark font-black my-5">${pct}%</p><p class="text-lg">${pass?"Amazing work! You earned candies and unlocked your next mission.":"You need 80% (4 out of 5 correct) to pass. Review these concepts and try again!"}</p>${wrong.length?`<div class="text-left mt-6"><h2 class="font-black text-xl mb-3">Concepts to Review</h2>${wrong.map(w=>`<div class="tile mb-2"><b>${w.topic}</b><p>${w.explanation}</p></div>`).join("")}</div>`:""}<div class="flex justify-center flex-wrap gap-3 mt-6"><button class="btn" onclick="${pass?"home()":"lab()"}">${pass?"Learning Path →":"Review Lab →"}</button><button class="btn2" onclick="lab()">Explore Again</button>${pass?`<button class="btn2" onclick="unitCertificate()">🏅 Unit Certificate</button>`:""}</div></section>`;speak(pass?"Congratulations! Mission complete!":"Let's review these concepts and try again.")}
+// Send final, verified scores only after the student confirms their diploma name.
+const ENDPOINT_URL="https://script.google.com/macros/s/AKfycbyAq9DVA2ee7Vtge9vND5PeucQposM_rYbup_nkP4DSvBxAkYmVBDcSeM3FefSy1g9x/exec";
+function finalAveragePercentage(){
+  // Average of the three actual unit grades; instructor preview never changes these values.
+  if(!Array.isArray(s.scores)||s.scores.length<3)return null;
+  const grades=s.scores.slice(0,3).map(Number);
+  if(grades.some(n=>!Number.isFinite(n)||n<0||n>100))return null;
+  return Math.round(grades.reduce((sum,n)=>sum+n,0)/3);
+}
+function saveResultsToExcel(userName,scorePercentage){
+  // Exact four-field payload expected by the supplied Apps Script example.
+  const data={
+    name:userName,
+    grade:'2nd Chp magnetic',
+    testResult:scorePercentage,
+    date:new Date().toLocaleString()
+  };
+  return fetch(ENDPOINT_URL,{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'text/plain;charset=UTF-8'},
+    body:JSON.stringify(data)
+  });
+}
+function submissionStatus(text,kind='info'){
+  const el=$('submissionStatus');if(el){el.textContent=text;el.style.color=kind==='error'?'#ffb4b4':'#a6ffe3'}
+}
+function retryGradeSubmission(){
+  if(!s.passed.every(Boolean)||!s.name)return;
+  const avg=finalAveragePercentage();
+  if(avg===null){submissionStatus('Unable to calculate the three unit grades.','error');return}
+  submissionStatus('Sending final average ('+avg+'%) to Google Sheets…');
+  saveResultsToExcel(s.name,avg+'%').then(()=>{
+    submissionStatus('Request sent. Open Google Sheets to verify the row was saved.');
+  }).catch(err=>{
+    console.error('Google Sheets submission error',err);
+    submissionStatus('Connection failed. Check internet and try Send Grades Again.','error');
+  });
+}
+function certificate(){
+  if(!s.passed.every(Boolean)){showModal('<h2 class="text-2xl font-black">Complete all three units to earn the final diploma.</h2><button class="btn mt-4" onclick="closeModal()">OK</button>');return}
+  const average=finalAveragePercentage();
+  showModal(`<h2 class="text-2xl font-black">🏆 Final Diploma</h2><p class="mt-2">Confirm your full name to generate your diploma and submit your final average.</p><input id="diplomaName" maxlength="55" value="${safe(s.name)}" placeholder="Full student name" class="p-3 rounded-xl bg-slate-900 border border-slate-500 text-white w-full mt-4"><p class="mt-3">Unit 1: ${s.scores[0]}% · Unit 2: ${s.scores[1]}% · Unit 3: ${s.scores[2]}% · <b>Average: ${average}%</b></p><button class="btn mt-5" onclick="confirmFinalDiploma()">GENERATE DIPLOMA</button><button class="btn2 mt-5 ml-2" onclick="closeModal()">Cancel</button>`)
+}
+function confirmFinalDiploma(){
+  const name=($('diplomaName')?.value||'').trim().slice(0,55);
+  if(!name){alert('Please enter your full name.');return}
+  if(!s.passed.every(Boolean))return;
+  s.name=name;save();closeModal();
+  const avg=finalAveragePercentage();
+  makeCertificate('Chapter 13: Magnets',avg);
+  const bar=document.createElement('div');bar.className='no-print glass p-4 mt-4 text-center';
+  bar.innerHTML='<p id="submissionStatus" role="status" class="mb-3 text-teal-200">Preparing to send grades…</p><button class="btn2" onclick="retryGradeSubmission()">↻ Send Grades Again</button><p class="text-sm text-slate-300 mt-2">The final average is sent as testResult. If the row does not appear, inspect Apps Script → Executions: the server may reject the request.</p>';
+  $('main').appendChild(bar);
+  retryGradeSubmission();
+}
+function unitCertificate(){makeCertificate(UNITS[unit].title,s.scores[unit])}
+function makeCertificate(title,pct){cancelAnimationFrame(anim);$("main").innerHTML=`<div class="no-print mb-5 flex gap-3"><button class="btn2" onclick="home()">← Back</button><button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button></div><section id="certificate" class="paper max-w-4xl mx-auto"><div style="font-size:55px">🏅 🧲 🏅</div><p style="letter-spacing:5px;font-weight:bold">FOOTPRINTS • SCIENCE ACADEMY</p><h1 style="font: bold 48px Georgia,serif;margin:25px 0">Certificate of Excellence</h1><p style="font-size:21px">This certificate is proudly awarded to</p><h2 style="font:italic bold 43px Georgia,serif;border-bottom:2px solid #b58a43;margin:22px auto;max-width:80%">${safe(s.name||"Science Explorer")}</h2><p style="font-size:20px">For outstanding achievement in</p><h3 style="font:bold 27px Georgia,serif;margin:14px">${safe(title)}</h3><p style="font-size:23px">Final Score: <strong>${pct}%</strong></p><p style="margin:22px">Date: ${new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"})}</p><div style="margin-top:40px;border-top:1px solid #9d783c;padding-top:12px;font-weight:bold">Ing. Milko Gonzales C.<br><small>Senior EdTech Instructional Designer</small></div></section>`}
+const ITEMS=[["🐼",60],["🦊",80],["🦁",100],["🧙",130],["🤖",160],["🎩",70],["👑",200]];
+function shop(){showModal(`<h2 class="text-3xl font-black">🛍️ Rewards Shop</h2><p class="mt-2">Your balance: 🍬 ${s.candies} candies</p><div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">${ITEMS.map(([a,price])=>`<button class="tile text-center" onclick="buy('${a}',${price})"><div class="text-4xl">${a}</div><p class="mt-2">${s.owned.includes(a)?"Owned":`🍬 ${price}`}</p></button>`).join("")}</div><button class="btn mt-5" onclick="buy('life',30)">❤️ +1 Life • 🍬 30</button><button class="btn2 mt-5 ml-2" onclick="closeModal()">Close</button>`)}
+function buy(a,price){if(a!=="life"&&s.owned.includes(a)){s.avatar=a;save();shop();return}if(s.candies<price){speak("You need more candies.");return}if(a==="life"&&s.lives>=5){speak("Your lives are already full.");return}s.candies-=price;if(a==="life")s.lives++;else{s.owned.push(a);s.avatar=a}save();shop();speak("Reward unlocked!")}
+function avatarPicker(){showModal(`<h2 class="text-2xl font-black mb-4">Choose Your Avatar</h2><div class="flex flex-wrap gap-3">${s.owned.map(a=>`<button class="tile text-4xl" onclick="s.avatar='${a}';save();closeModal()">${a}</button>`).join("")}</div><button class="btn2 mt-4" onclick="closeModal()">Close</button>`)}
+// Instructor preview: Ctrl+U cycles through each unit and its certificate.
+// This preview does not modify students' scores, rewards, lives or saved progress.
+let instructorPreviewStep=-1;
+function instructorPreviewNext(){
+  closeModal();
+  instructorPreviewStep=(instructorPreviewStep+1)%7;
+  if(instructorPreviewStep===6){
+    makeCertificate("Chapter 13: Magnets",100);
+  }else{
+    unit=Math.floor(instructorPreviewStep/2);
+    if(instructorPreviewStep%2===0){checked=new Set();lab()}
+    else makeCertificate(UNITS[unit].title,100);
+  }
+  const toast=document.createElement("div");
+  toast.textContent="INSTRUCTOR PREVIEW • Ctrl + U: Next screen • No progress saved";
+  toast.setAttribute("role","status");
+  toast.style.cssText="position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:90;background:#102c46;color:#eaffff;border:1px solid #56e5cf;border-radius:12px;padding:10px 16px;font:bold 13px Arial;box-shadow:0 6px 20px #0008;pointer-events:none";
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(),2400);
+}
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape")closeModal();
+  if(e.ctrlKey&&!e.altKey&&!e.metaKey&&e.key.toLowerCase()==="u"){
+    e.preventDefault();e.stopPropagation();instructorPreviewNext();
+  }
+});stats();home();
+</script></body></html>
